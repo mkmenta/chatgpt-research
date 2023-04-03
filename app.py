@@ -39,7 +39,7 @@ app.request_class = SanitizedRequest
 # Main routes
 @app.route('/', methods=['GET'])
 def main():
-    return render_template('white_chat.html')
+    return render_template('chat/chat.html', chat_titles=["Title 1", "Title 2"])
 
 
 # Jinja filters
