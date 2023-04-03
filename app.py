@@ -4,6 +4,7 @@ from datetime import timedelta
 from flask import Flask, render_template
 from flask_session import Session
 from mongoengine import connect
+from models.chat import Chat
 
 from utils import HTTPMethodOverrideMiddleware, SanitizedRequest
 
@@ -37,9 +38,15 @@ app.request_class = SanitizedRequest
 
 
 # Main routes
-@app.route('/', methods=['GET'])
-def main():
-    return render_template('chat/chat.html', chat_titles=["Title 1", "Title 2"])
+@app.route('/', methods=['GET'], defaults={'chat_id': None})
+@app.route('/<chat_id>', methods=['GET'])
+def main(chat_id):
+    chats = Chat.objects.all()
+    if chat_id is None:
+        current_chat = chats[0]
+    else:
+        current_chat = Chat.objects.get(id=chat_id)
+    return render_template('chat/chat.html', chats=chats, current_chat=current_chat)
 
 
 # Jinja filters
