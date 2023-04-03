@@ -110,7 +110,7 @@
                                 {% if message.role == "user" %}
                                 <div class="chat-message-right pb-4">
                                     <div>
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                                        <img src="{{ url_for('static', filename='imgs/user.gif') }}"
                                             class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
                                         <!-- <div class="text-muted small text-nowrap mt-2">2:33 am</div> -->
                                     </div>
@@ -122,7 +122,7 @@
                                 {% else %}
                                 <div class="chat-message-left pb-4">
                                     <div>
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                                        <img src="{{ url_for('static', filename='imgs/openai.gif') }}"
                                             class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
                                         <!-- <div class="text-muted small text-nowrap mt-2">2:34 am</div> -->
                                     </div>
