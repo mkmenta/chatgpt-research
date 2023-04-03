@@ -4,9 +4,13 @@ from datetime import datetime
 
 from flask import Flask, redirect, render_template, request
 from flask_session import Session
+from flask_login import login_required, current_user
+
 from mongoengine import connect
 from models.chat import Chat
 from models.message import Message
+from routes.users import blueprint as users_blueprint, login_manager
+
 
 from utils import HTTPMethodOverrideMiddleware, SanitizedRequest
 import openai
@@ -40,14 +44,17 @@ app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
 app.request_class = SanitizedRequest
 
 # Initialize app with login manager
-# login_manager.init_app(app)
+login_manager.init_app(app)
+
+app.register_blueprint(users_blueprint, url_prefix='/')
 
 
 # Main routes
 @app.route('/', methods=['GET'], defaults={'chat_id': None})
 @app.route('/<chat_id>', methods=['GET'])
+@login_required
 def main(chat_id):
-    chats = Chat.objects.all()
+    chats = Chat.objects.filter(user=current_user)
     if chat_id is not None:
         current_chat = Chat.objects.get(id=chat_id)
     else:
@@ -57,11 +64,12 @@ def main(chat_id):
 
 @app.route('/new/messages/send', methods=['POST'], defaults={'chat_id': None})
 @app.route('/<chat_id>/messages/send', methods=['POST'])
+@login_required
 def send_message(chat_id):
     if chat_id is not None:
         chat = Chat.objects.get(id=chat_id)
     else:
-        chat = Chat(title=datetime.now().strftime("%m/%d/%Y, %H:%M"))
+        chat = Chat(title=datetime.now().strftime("%m/%d/%Y, %H:%M"), user=current_user)
         chat.save()
     last_msg = Message(role="user", content=request.form.get('message').striptags())
     last_msg.save()

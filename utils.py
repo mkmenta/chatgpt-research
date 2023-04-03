@@ -1,4 +1,5 @@
 import re
+from urllib.parse import urlparse, urljoin
 
 from flask import request, escape, Request
 # from werkzeug import Request
@@ -43,3 +44,9 @@ class SanitizedRequest(Request):
             for k, v in self.form.items():
                 sanitized_form[k] = escape(v)
             self.form = ImmutableMultiDict(sanitized_form)
+
+
+def is_safe_url(target):
+    ref_url = urlparse(request.host_url)
+    test_url = urlparse(urljoin(request.host_url, target))
+    return test_url.scheme in ('http', 'https') and ref_url.netloc == test_url.netloc

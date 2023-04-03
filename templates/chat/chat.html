@@ -7,7 +7,7 @@
 
     <title>white chat - Bootdey.com</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='stylesheets/bootstrap-4.5.0.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='stylesheets/chat.css') }}" rel="stylesheet">
 </head>
 
@@ -142,11 +142,9 @@
             </div>
         </div>
     </main>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="text/javascript">
+    <script src="{{ url_for('static', filename='javascripts/jquery-1.10.2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='javascripts/bootstrap-4.5.0.bundle.min.js') }}"></script>
 
-    </script>
 </body>
 
 </html>

@@ -6,9 +6,12 @@ from mongoengine import connect
 
 from models.chat import Chat
 from models.message import Message
+from models.user import User
 
 if __name__ == "__main__":
     connect(host=os.environ.get('MONGOURI'))
+
+    user = User.objects.get(username="student1")
 
     # Remove all chats and messages
     Chat.drop_collection()
@@ -23,6 +26,7 @@ if __name__ == "__main__":
         chats.append(
             Chat(
                 title=f"Chat {i}",
+                user=user,
                 messages=[
 
                 ]
