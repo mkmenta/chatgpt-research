@@ -18,13 +18,22 @@
             <div class="card">
                 <div class="row g-0">
                     <div class="col-12 col-lg-5 col-xl-3 border-right">
-                        <!-- <div class="px-4 d-none d-md-block">
+                        {% if current_user.admin %}
+                        <div class="px-4 d-none d-md-block">
                             <div class="d-flex align-items-center">
                                 <div class="flex-grow-1">
-                                    <input type="text" class="form-control my-3" placeholder="Search...">
+                                    <form action="/" method="GET">
+                                        <select class="custom-select" name="user_id" onchange="this.form.submit()">
+                                            {% for user in users %}
+                                            <option value="{{user.id}}" {% if user.id==user_to_show.id %} selected
+                                                {%endif%}>{{user.username}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </form>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
+                        {% endif %}
                         <a href="/" class="list-group-item list-group-item-action border-0">
                             <!-- <div class="badge bg-success float-right">5</div> -->
                             <div class="d-flex align-items-start">
@@ -133,7 +142,8 @@
                                 <div class="input-group">
                                     <input type="text" class="form-control" placeholder="Type your message"
                                         name="message">
-                                    <button class="btn btn-primary">Send</button>
+                                    <button class="btn btn-primary" {%if user_to_show != current_user%} disabled
+                                        {%endif%}>Send</button>
                                 </div>
                             </div>
                         </form>

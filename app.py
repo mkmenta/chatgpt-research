@@ -9,6 +9,7 @@ from flask_login import login_required, current_user
 from mongoengine import connect
 from models.chat import Chat
 from models.message import Message
+from models.user import User
 from routes.users import blueprint as users_blueprint, login_manager
 
 
@@ -54,12 +55,20 @@ app.register_blueprint(users_blueprint, url_prefix='/')
 @app.route('/<chat_id>', methods=['GET'])
 @login_required
 def main(chat_id):
-    chats = Chat.objects.filter(user=current_user)
+    user_id = request.args.get('user_id')
+    user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
+    chats = Chat.objects.filter(user=user_to_show)
     if chat_id is not None:
         current_chat = Chat.objects.get(id=chat_id)
+        if current_chat.user != user_to_show:
+            raise Exception("Chat does not belong to user")
     else:
         current_chat = None
-    return render_template('chat/chat.html', chats=chats, current_chat=current_chat)
+    if current_user.admin:
+        users = User.objects.all()
+    else:
+        users = []
+    return render_template('chat/chat.html', chats=chats, current_chat=current_chat, users=users, user_to_show=user_to_show)
 
 
 @app.route('/new/messages/send', methods=['POST'], defaults={'chat_id': None})
@@ -71,6 +80,8 @@ def send_message(chat_id):
     else:
         chat = Chat(title=datetime.now().strftime("%m/%d/%Y, %H:%M"), user=current_user)
         chat.save()
+    if chat.user != current_user:
+        raise Exception("Chat does not belong to user")
     last_msg = Message(role="user", content=request.form.get('message').striptags())
     last_msg.save()
     chat.messages.append(last_msg)
