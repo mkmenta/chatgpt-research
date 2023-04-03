@@ -11,10 +11,12 @@
     <link href="{{ url_for('static', filename='stylesheets/chat.css') }}" rel="stylesheet">
 </head>
 
-<body>
+<body class="d-flex flex-column vh-100">
+    {% include 'partials/navbar.html' %}
+
     <main class="content">
         <div class="container p-0">
-            <h1 class="h3 mb-3">ChatGPT Research</h1>
+            <!-- <h1 class="h3 mb-3">ChatGPT Research</h1> -->
             <div class="card">
                 <div class="row g-0">
                     <div class="col-12 col-lg-5 col-xl-3 border-right">
