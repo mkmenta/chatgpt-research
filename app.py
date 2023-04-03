@@ -1,18 +1,23 @@
 import os
 from datetime import timedelta
+import time
 
-from flask import Flask, render_template
+from flask import Flask, redirect, render_template
 from flask_session import Session
 from mongoengine import connect
 from models.chat import Chat
 
 from utils import HTTPMethodOverrideMiddleware, SanitizedRequest
-
+import openai
 # Initialize app
 app = Flask(__name__)
 
 # Connect to MongoDB
 connect(host=os.environ.get('MONGOURI'))
+
+# Connect to OpenAI
+openai.organization = os.getenv("OPENAI_ORGANIZATION")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Initialize sessions
 app.secret_key = os.environ.get('CHATGPT_RESEARCH_SECRET')
@@ -49,7 +54,31 @@ def main(chat_id):
     return render_template('chat/chat.html', chats=chats, current_chat=current_chat)
 
 
+@app.route('/<chat_id>/messages/send', methods=['POST'])
+def send_message(chat_id):
+    chat = Chat.objects.get(id=chat_id)
+
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=conversation
+    )
+    return redirect(f"/{chat_id}")
+
+
 # Jinja filters
 @app.template_filter('env_override')
 def env_override(value, key):
     return os.getenv(key, value)
+
+
+""" Tackle plan:
+1. Send post
+2. Create a fake message "..."
+3. Make visible last message with javascript and disable send mesage
+4. The redirect will give the new conversation
+
+In case before 4 the user refreshes the page
+should see the fake message
+If the last message is a ... then with javascript force a refresh of the page each 3 secs and disable send message
+That should do it
+"""
