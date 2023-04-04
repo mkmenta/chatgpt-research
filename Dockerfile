@@ -11,5 +11,4 @@ RUN python3.9 get-pip.py
 COPY . /app
 WORKDIR /app
 RUN python3.9 -m pip install -r requirements.txt
-ENV FLASK_APP=app
-CMD python3.9 -m flask run --host=0.0.0.0
+CMD [ "python3.9", "./app.py" ]

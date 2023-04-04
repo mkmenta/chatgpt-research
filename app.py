@@ -130,3 +130,6 @@ should see the fake message
 If the last message is a ... then with javascript force a refresh of the page each 3 secs and disable send message
 That should do it
 """
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
