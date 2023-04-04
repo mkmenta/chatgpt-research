@@ -19,21 +19,21 @@ def load_user(user_id):
     return User.objects.get(id=ObjectId(user_id))
 
 
-@blueprint.route('/register', methods=['GET'])
-def register_user():
-    return render_template('users/register.html')
+# @blueprint.route('/register', methods=['GET'])
+# def register_user():
+#     return render_template('users/register.html')
 
 
-@blueprint.route('/register', methods=['POST'])
-def post_register_user():
-    try:
-        user = User.register(**request.form)
-    except NotUniqueError:
-        flash("User already exists.", "error")
-        return redirect("/register")
-    login_user(user)
-    flash('Welcome!', 'success')
-    return redirect('/')
+# @blueprint.route('/register', methods=['POST'])
+# def post_register_user():
+#     try:
+#         user = User.register(**request.form)
+#     except NotUniqueError:
+#         flash("User already exists.", "error")
+#         return redirect("/register")
+#     login_user(user)
+#     flash('Welcome!', 'success')
+#     return redirect('/')
 
 
 @blueprint.route('/login', methods=['GET'])
