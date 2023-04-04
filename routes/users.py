@@ -38,7 +38,7 @@ def post_register_user():
 
 @blueprint.route('/login', methods=['GET'])
 def get_login_user():
-    session['next'] = request.args.get('next')
+    # session['next'] = request.args.get('next')
     return render_template('users/login.html')
 
 
@@ -49,11 +49,11 @@ def post_login_user():
         if user.authenticate(request.form['password']):
             login_user(user)
             flash('Welcome back!', 'success')
-            next = session['next']
-            del session['next']
-            if not is_safe_url(next):
-                return abort(400)
-            return redirect(next or '/')
+            # next = session['next']
+            # del session['next']
+            # if not is_safe_url(next):
+            # return abort(400)
+            return redirect('/')
     except DoesNotExist:
         pass
     flash("Password or username is incorrect.", "error")
