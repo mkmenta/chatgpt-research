@@ -132,16 +132,11 @@
                                     </div>
                                     <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
                                         <div class="font-weight-bold mb-1">ChatGPT</div>
-                                        {{ markdown(message.content) | safe }}
+                                        <div class="bot-message">{{ markdown(message.content) | safe }}</div>
                                     </div>
                                 </div>
                                 {% endif %}
                                 {% endfor %}
-                                {% if current_chat.messages and current_chat.messages[-1].content == '...' %}
-                                <script>const running = true;</script>
-                                {% else %}
-                                <script>const running = false;</script>
-                                {%endif%}
                                 {%endif%}
                                 <script
                                     src="{{ url_for('static', filename='javascripts/showNewMessage.js') }}"></script>
@@ -193,7 +188,14 @@
     </main>
     <script src="{{ url_for('static', filename='javascripts/jquery-1.10.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='javascripts/bootstrap-4.5.0.bundle.min.js') }}"></script>
-
+    <script>
+        const botMessages = document.getElementsByClassName('bot-message');
+        if (botMessages[botMessages.length - 1].textContent == '...') {
+            window.setTimeout(function () {
+                location.reload();
+            }, 3000);
+        } 
+    </script>
 </body>
 
 </html>
