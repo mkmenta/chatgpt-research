@@ -108,7 +108,7 @@
                             </div>
                         </div> -->
                         <div class="position-relative">
-                            <div class="chat-messages p-4">
+                            <div class="chat-messages p-4" id="allMessages">
                                 {% if current_chat is not none%}
                                 {% for message in current_chat.messages %}
                                 {% if message.role == "user" %}
@@ -168,6 +168,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <script>
+                                const allMessages = document.getElementById('allMessages');
+                                allMessages.scrollTo(0, allMessages.scrollHeight);
+                            </script>
                         </div>
                         <form {% if current_chat is not none%} action="/{{ current_chat.id }}/messages/send" {% else %}
                             action="/new/messages/send" {% endif %} method="POST" onsubmit="showNewMessage()"
