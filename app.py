@@ -66,7 +66,7 @@ def main(chat_id):
     else:
         current_chat = None
     if current_user.admin:
-        users = User.objects.all()
+        users = User.objects.find(username__not__startswith="test-")
     else:
         users = []
     return render_template('chat/chat.html', chats=chats, current_chat=current_chat, users=users, user_to_show=user_to_show)
