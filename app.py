@@ -2,7 +2,7 @@ import os
 from datetime import timedelta
 from datetime import datetime
 
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 from flask_session import Session
 from flask_login import login_required, current_user
 from markdown import markdown
@@ -114,7 +114,14 @@ def send_message(chat_id):
     return redirect(f"/{chat.id}")
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'imgs/favicon/favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 # Jinja filters
+
+
 @app.template_filter('env_override')
 def env_override(value, key):
     return os.getenv(key, value)
