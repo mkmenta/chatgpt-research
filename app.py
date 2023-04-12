@@ -83,12 +83,12 @@ def send_message(chat_id):
         chat.save()
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
-    last_msg = Message(role="user", content=request.form.get('message').striptags())
-    last_msg.save()
-    chat.messages.append(last_msg)
-    last_msg = Message(role="assistant", content="...")
-    last_msg.save()
-    chat.messages.append(last_msg)
+    last_usr_msg = Message(role="user", content=request.form.get('message').striptags())
+    last_usr_msg.save()
+    chat.messages.append(last_usr_msg)
+    last_bot_msg = Message(role="assistant", content="...")
+    last_bot_msg.save()
+    chat.messages.append(last_bot_msg)
     chat.save()
     messages = [{
         "role": "system",
@@ -105,12 +105,17 @@ def send_message(chat_id):
     ])
     # print(messages)
     # response = {'choices': [{'message': {'content': 'Hello world'}}]}
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages
-    )
-    last_msg.content = response['choices'][0]['message']['content']
-    last_msg.save()
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages
+        )
+    except Exception as e:
+        print(f"Exception: {e}")
+        last_bot_msg.delete()
+        last_usr_msg.delete()
+    last_bot_msg.content = response['choices'][0]['message']['content']
+    last_bot_msg.save()
     return redirect(f"/{chat.id}")
 
 
