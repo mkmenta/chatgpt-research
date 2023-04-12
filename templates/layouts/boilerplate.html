@@ -7,6 +7,7 @@
     <link href="{{ url_for('static', filename='stylesheets/bootstrap-5.0.1.min.css') }}" rel="stylesheet"
         integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <link href="{{ url_for('static', filename='stylesheets/app.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <title>ChatGPT Research</title>
 </head>
 
@@ -15,7 +16,7 @@
 <body class="d-flex flex-column vh-100">
     {% include 'partials/navbar.html' %}
     <main class="container mt-5">
-        {% include 'partials/flash.html' %}
+        {# {% include 'partials/flash.html' %} #}
         {% block body %}
         {% endblock %}
     </main>

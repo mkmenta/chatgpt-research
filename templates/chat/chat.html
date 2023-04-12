@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="{{ url_for('static', filename='stylesheets/bootstrap-4.5.0.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='stylesheets/chat.css') }}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 
 <body class="d-flex flex-column vh-100">
@@ -107,7 +108,7 @@
                             </div>
                         </div> -->
                         <div class="position-relative">
-                            <div class="chat-messages p-4">
+                            <div class="chat-messages p-4" id="allMessages">
                                 {% if current_chat is not none%}
                                 {% for message in current_chat.messages %}
                                 {% if message.role == "user" %}
@@ -131,22 +132,52 @@
                                     </div>
                                     <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
                                         <div class="font-weight-bold mb-1">ChatGPT</div>
-                                        {{message.content}}
+                                        <div class="bot-message">{{ markdown(message.content) | safe }}</div>
                                     </div>
                                 </div>
                                 {% endif %}
                                 {% endfor %}
                                 {%endif%}
+                                <script
+                                    src="{{ url_for('static', filename='javascripts/showNewMessage.js') }}"></script>
+                                <div class="chat-message-right pb-4 new-messages" style="display: none;">
+                                    <div>
+                                        <img src="{{ url_for('static', filename='imgs/user.gif') }}"
+                                            class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
+                                        <!-- <div class="text-muted small text-nowrap mt-2">2:33 am</div> -->
+                                    </div>
+                                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                                        <div class="font-weight-bold mb-1">You</div>
+                                        <p id="newMessage"></p>
+                                    </div>
+                                </div>
+                                <div class="chat-message-left pb-4 new-messages" style="display: none;">
+                                    <div>
+                                        <img src="{{ url_for('static', filename='imgs/openai.gif') }}"
+                                            class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
+                                        <!-- <div class="text-muted small text-nowrap mt-2">2:34 am</div> -->
+                                    </div>
+                                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
+                                        <div class="font-weight-bold mb-1">ChatGPT</div>
+                                        <p>...</p>
+                                    </div>
+                                </div>
                             </div>
+                            <script>
+                                const allMessages = document.getElementById('allMessages');
+                                allMessages.scrollTo(0, allMessages.scrollHeight);
+                            </script>
                         </div>
                         <form {% if current_chat is not none%} action="/{{ current_chat.id }}/messages/send" {% else %}
-                            action="/new/messages/send" {% endif %} method="POST" novalidate>
+                            action="/new/messages/send" {% endif %} method="POST" onsubmit="showNewMessage()"
+                            novalidate>
                             <div class="flex-grow-0 py-3 px-4 border-top">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Type your message"
-                                        name="message">
-                                    <button class="btn btn-primary" {%if user_to_show != current_user%} disabled
-                                        {%endif%}>Send</button>
+                                    <input id="newMessageInput" type="text" class="form-control"
+                                        placeholder="Type your message" name="messageInput">
+                                    <input id="newMessageInputHidden" type="hidden" name="message" value="">
+                                    <button id="sendButton" class="btn btn-primary" {%if user_to_show !=current_user%}
+                                        disabled {%endif%}>Send</button>
                                 </div>
                             </div>
                         </form>
@@ -157,7 +188,14 @@
     </main>
     <script src="{{ url_for('static', filename='javascripts/jquery-1.10.2.min.js') }}"></script>
     <script src="{{ url_for('static', filename='javascripts/bootstrap-4.5.0.bundle.min.js') }}"></script>
-
+    <script>
+        const botMessages = document.getElementsByClassName('bot-message');
+        if (botMessages[botMessages.length - 1].textContent == '...') {
+            window.setTimeout(function () {
+                location.reload();
+            }, 3000);
+        } 
+    </script>
 </body>
 
 </html>

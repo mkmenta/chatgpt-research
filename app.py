@@ -2,9 +2,10 @@ import os
 from datetime import timedelta
 from datetime import datetime
 
-from flask import Flask, redirect, render_template, request
+from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 from flask_session import Session
 from flask_login import login_required, current_user
+from markdown import markdown
 
 from mongoengine import connect
 from models.chat import Chat
@@ -82,12 +83,12 @@ def send_message(chat_id):
         chat.save()
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
-    last_msg = Message(role="user", content=request.form.get('message').striptags())
-    last_msg.save()
-    chat.messages.append(last_msg)
-    last_msg = Message(role="assistant", content="...")
-    last_msg.save()
-    chat.messages.append(last_msg)
+    last_usr_msg = Message(role="user", content=request.form.get('message').striptags())
+    last_usr_msg.save()
+    chat.messages.append(last_usr_msg)
+    last_bot_msg = Message(role="assistant", content="...")
+    last_bot_msg.save()
+    chat.messages.append(last_bot_msg)
     chat.save()
     messages = [{
         "role": "system",
@@ -104,19 +105,34 @@ def send_message(chat_id):
     ])
     # print(messages)
     # response = {'choices': [{'message': {'content': 'Hello world'}}]}
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages
-    )
-    last_msg.content = response['choices'][0]['message']['content']
-    last_msg.save()
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=messages
+        )
+    except Exception as e:
+        print(f"Exception: {e}")
+        last_bot_msg.delete()
+        last_usr_msg.delete()
+    last_bot_msg.content = response['choices'][0]['message']['content']
+    last_bot_msg.save()
     return redirect(f"/{chat.id}")
 
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                               'imgs/favicon/favicon.ico', mimetype='image/vnd.microsoft.icon')
+
 # Jinja filters
+
+
 @app.template_filter('env_override')
 def env_override(value, key):
     return os.getenv(key, value)
+
+
+app.jinja_env.globals.update(markdown=markdown)
 
 
 """ Tackle plan:
@@ -132,4 +148,4 @@ That should do it
 """
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=54928)
