@@ -17,6 +17,12 @@ class User(Document, UserMixin):
         user.save()
         return user
 
+    def update_password(self, password: str):
+        salt = bcrypt.gensalt()  # rounds=12 by default
+        hashpw = bcrypt.hashpw(password.encode('utf-8'), salt)
+        self.hash = hashpw.decode('utf-8')
+        self.save()
+
     def authenticate(self, password: str):
         if bcrypt.checkpw(password.encode('utf-8'), self.hash.encode('utf-8')):
             return True
