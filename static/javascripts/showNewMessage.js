@@ -16,5 +16,6 @@ function showNewMessage() {
     sendButton.disabled = true;
     newMessageInput.value = '';
     newMessageInput.disabled = true;
+    allMessages.scrollTo(0, allMessages.scrollHeight);
     return true;
 }
