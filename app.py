@@ -69,7 +69,7 @@ def main(chat_id):
         users = User.objects.filter(username__not__startswith="test-")
     else:
         users = []
-    return render_template('chat/chat.html', chats=chats, current_chat=current_chat, users=users, user_to_show=user_to_show)
+    return render_template('chat/chat2.html', chats=chats, current_chat=current_chat, users=users, user_to_show=user_to_show)
 
 
 @app.route('/new/messages/send', methods=['POST'], defaults={'chat_id': None})
@@ -110,12 +110,12 @@ def send_message(chat_id):
             model="gpt-3.5-turbo",
             messages=messages
         )
+        last_bot_msg.content = response['choices'][0]['message']['content']
+        last_bot_msg.save()
     except Exception as e:
         print(f"Exception: {e}")
         last_bot_msg.delete()
         last_usr_msg.delete()
-    last_bot_msg.content = response['choices'][0]['message']['content']
-    last_bot_msg.save()
     return redirect(f"/{chat.id}")
 
 
