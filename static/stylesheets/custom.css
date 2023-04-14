@@ -1,0 +1,7 @@
+@keyframes spin {
+  100% {transform: rotate(-360deg);}
+}
+
+.round-and-round {
+      animation: spin 1s cubic-bezier(0.52, 0.0, 0.48, 1.0) infinite;
+}
