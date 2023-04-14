@@ -19,3 +19,16 @@ function showNewMessage() {
     allMessages.scrollTo(0, allMessages.scrollHeight);
     return true;
 }
+
+function setSpinningIfWriting() {
+    const allMessages = document.getElementsByClassName("messages")
+    const lastMessage = allMessages[allMessages.length - 1]
+    if (lastMessage.getElementsByTagName("span")[0].textContent == "Writing...") {
+        lastMessage.getElementsByTagName("span")[0].innerHTML = '<i>Writing...</i>'
+        lastMessage.getElementsByTagName("img")[0].classList.add("round-and-round")
+        window.setTimeout(function () {
+            location.reload();
+        }, 3000);
+    }
+}
+setSpinningIfWriting()

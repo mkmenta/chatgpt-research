@@ -44,7 +44,7 @@
         <main class="row overflow-auto" id="allMessages" style="max-height: 80vh">
             {% if current_chat is not none%}
             {% for message in current_chat.messages %}
-            <div class="border-bottom p-2 d-flex" style="font-size: small;">
+            <div class="border-bottom p-2 d-flex messages" style="font-size: small;">
                 <img {% if message.role=="user" %}
                     src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/user.gif" {% else %}
                     src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif" {% endif %}
