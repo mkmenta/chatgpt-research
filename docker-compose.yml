@@ -3,6 +3,7 @@ version: '3'
 services:
   web:
     build: .
+    command: gunicorn --bind 0.0.0.0:54928 app:app --workers $NWORKERS --timeout 120 --worker-class gevent
     ports:
       - 54928:54928
     environment:
@@ -10,3 +11,4 @@ services:
       - OPENAI_API_KEY
       - OPENAI_ORGANIZATION
       - CHATGPT_RESEARCH_SECRET
+      - NWORKERS
