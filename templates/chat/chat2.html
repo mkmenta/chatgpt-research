@@ -63,7 +63,6 @@
                     class="rounded-circle mr-1 round-and-round" width="40" height="40">
                 <span class="px-3 py-2" style="white-space: pre-line;"><i>Writing...</i></span>
             </div>
-            <script src="{{ url_for('static', filename='javascripts/showNewMessage.js') }}"></script>
             <script>
                 const allMessages = document.getElementById('allMessages');
                 allMessages.scrollTo(0, allMessages.scrollHeight);
@@ -82,6 +81,7 @@
                 </div>
             </form>
         </div>
+        <script src="{{ url_for('static', filename='javascripts/showNewMessage.js') }}"></script>
     </div>
 </div>
 {% endblock %}
