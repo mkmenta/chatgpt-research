@@ -1,0 +1,19 @@
+{% extends "layouts/boilerplate.html" %}
+{% block body %}
+<div class="card">
+    <h5 class="card-header">Terms of use</h5>
+    <div class="card-body">
+        <h5 class="card-title">This is a research oriented website</h5>
+        <p class="card-text">Take into account that all the content you insert in this website will be stored and
+            reviewed by the researchers. So, do not write any personal information or any information that you do not
+            want to be read by the researchers.</p>
+        <h5 class="card-title">This websites uses OpenAI's ChatGPT API</h5>
+        The content that you insert in this website will be sent to OpenAI's servers and processed by their systems. But
+        your data won't be used to improve their models ()
+        https://openai.com/policies/usage-policies
+        <form action="/accept">
+            <button type="submit" class="btn btn-primary">Accept</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

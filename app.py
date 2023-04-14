@@ -119,6 +119,16 @@ def send_message(chat_id):
     return redirect(f"/{chat.id}")
 
 
+@app.route('/tos', methods=['GET'])
+def tos():
+    return render_template('tos.html')
+
+
+@app.route('/accept', methods=['POST'])
+def accept_tos():
+    return redirect('/')
+
+
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
