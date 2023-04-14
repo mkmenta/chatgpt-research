@@ -26,6 +26,12 @@ function setSpinningIfWriting() {
     if (lastMessage.getElementsByTagName("span")[0].textContent == "Writing...") {
         lastMessage.getElementsByTagName("span")[0].innerHTML = '<i>Writing...</i>'
         lastMessage.getElementsByTagName("img")[0].classList.add("round-and-round")
+
+        const sendButton = document.getElementById("sendButton");
+        const newMessageInput = document.getElementById("newMessageInput");
+        newMessageInput.disabled = true;
+        sendButton.disabled = true;
+
         window.setTimeout(function () {
             location.reload();
         }, 3000);
