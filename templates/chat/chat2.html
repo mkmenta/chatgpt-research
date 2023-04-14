@@ -45,9 +45,10 @@
             {% if current_chat is not none%}
             {% for message in current_chat.messages %}
             <div class="border-bottom p-2 d-flex" style="font-size: small;">
-                <img {% if message.role=="user" %} src="{{ url_for('static', filename='imgs/user.gif') }}" {% else %}
-                    src="{{ url_for('static', filename='imgs/openai.gif') }}" {% endif %} class="rounded-circle mr-1"
-                    width="40" height="40">
+                <img {% if message.role=="user" %}
+                    src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/user.gif" {% else %}
+                    src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif" {% endif %}
+                    class="rounded-circle mr-1" width="40" height="40">
                 <span class="px-3" style="white-space: pre-line;">
                     {{ message.content }}
                 </span>
@@ -55,15 +56,15 @@
             {% endfor %}
             {% endif %}
             <div class="border-bottom p-2 d-flex new-messages" style="font-size: small; display: none!important;">
-                <img src="{{ url_for('static', filename='imgs/user.gif') }}" class="rounded-circle mr-1" width="40"
-                    height="40">
+                <img src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/user.gif"
+                    class="rounded-circle mr-1" width="40" height="40">
                 <span class="px-3" style="white-space: pre-line;">
                     <p id="newMessage"></p>
                 </span>
             </div>
             <div class="border-bottom p-2 d-flex new-messages" style="font-size: small; display: none!important;">
-                <img src="{{ url_for('static', filename='imgs/openai.gif') }}" class="rounded-circle mr-1" width="40"
-                    height="40">
+                <img src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif"
+                    class="rounded-circle mr-1" width="40" height="40">
                 <span class="px-3" style="white-space: pre-line;">
                     <p>...</p>
                 </span>
