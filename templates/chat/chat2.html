@@ -44,30 +44,24 @@
         <main class="row overflow-auto" id="allMessages" style="max-height: 80vh">
             {% if current_chat is not none%}
             {% for message in current_chat.messages %}
-            <div class="border-bottom p-2 d-flex" style="font-size: small;">
+            <div class="border-bottom p-2 d-flex messages" style="font-size: small;">
                 <img {% if message.role=="user" %}
                     src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/user.gif" {% else %}
                     src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif" {% endif %}
                     class="rounded-circle mr-1" width="40" height="40">
-                <span class="px-3" style="white-space: pre-line;">
-                    {{ message.content }}
-                </span>
+                <span class="px-3 py-2" style="white-space: pre-line;">{{ message.content }}</span>
             </div>
             {% endfor %}
             {% endif %}
             <div class="border-bottom p-2 d-flex new-messages" style="font-size: small; display: none!important;">
                 <img src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/user.gif"
                     class="rounded-circle mr-1" width="40" height="40">
-                <span class="px-3" style="white-space: pre-line;">
-                    <p id="newMessage"></p>
-                </span>
+                <span id="newMessage" class="px-3 py-2" style="white-space: pre-line;"></span>
             </div>
             <div class="border-bottom p-2 d-flex new-messages" style="font-size: small; display: none!important;">
                 <img src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif"
-                    class="rounded-circle mr-1" width="40" height="40">
-                <span class="px-3" style="white-space: pre-line;">
-                    <p>...</p>
-                </span>
+                    class="rounded-circle mr-1 round-and-round" width="40" height="40">
+                <span class="px-3 py-2" style="white-space: pre-line;"><i>Writing...</i></span>
             </div>
             <script src="{{ url_for('static', filename='javascripts/showNewMessage.js') }}"></script>
             <script>

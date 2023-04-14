@@ -85,7 +85,7 @@ def send_message(chat_id):
     last_usr_msg = Message(role="user", content=request.form.get('message').striptags())
     last_usr_msg.save()
     chat.messages.append(last_usr_msg)
-    last_bot_msg = Message(role="assistant", content="...")
+    last_bot_msg = Message(role="assistant", content="Writing...")
     last_bot_msg.save()
     chat.messages.append(last_bot_msg)
     chat.save()
