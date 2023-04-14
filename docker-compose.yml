@@ -6,6 +6,7 @@ services:
     command: gunicorn --bind 0.0.0.0:54928 app:app --workers $NWORKERS --timeout 120 --worker-class gevent
     expose:
       - 54928
+    restart: always
     environment:
       - MONGOURI
       - OPENAI_API_KEY
