@@ -5,7 +5,6 @@ from datetime import datetime
 from flask import Flask, redirect, render_template, request, send_from_directory, url_for
 from flask_session import Session
 from flask_login import login_required, current_user
-from markdown import markdown
 
 from mongoengine import connect
 from models.chat import Chat
@@ -130,9 +129,6 @@ def favicon():
 @app.template_filter('env_override')
 def env_override(value, key):
     return os.getenv(key, value)
-
-
-app.jinja_env.globals.update(markdown=markdown)
 
 
 """ Tackle plan:

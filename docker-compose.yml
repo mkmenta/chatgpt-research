@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: gunicorn --bind 0.0.0.0:54928 app:app --workers $NWORKERS --timeout 120 --worker-class gevent
+    expose:
+      - 54928
+    restart: always
+    environment:
+      - MONGOURI
+      - OPENAI_API_KEY
+      - OPENAI_ORGANIZATION
+      - CHATGPT_RESEARCH_SECRET
+      - NWORKERS
+  nginx_service:
+    # Based on https://mindsers.blog/post/https-using-nginx-certbot-docker/
+    image: nginx:latest
+    ports:
+      - 80:80
+      - 443:443
+    restart: always
+    volumes:
+      # we map the folder located at /etc/nginx/conf.d/ from the docker container
+      # to a folder located at ./nginx/conf/ on our local machine (in read-only mode)
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./certbot/www:/var/www/certbot/:ro
+      - ./certbot/conf/:/etc/nginx/ssl/:ro
+    depends_on:
+      - web
+  certbot:
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
