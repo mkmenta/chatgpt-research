@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - 54928:54928
+    environment:
+      - MONGOURI
+      - OPENAI_API_KEY
+      - OPENAI_ORGANIZATION
+      - CHATGPT_RESEARCH_SECRET
