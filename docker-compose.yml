@@ -4,11 +4,17 @@ services:
   web:
     build: .
     command: gunicorn --bind 0.0.0.0:54928 app:app --workers $NWORKERS --timeout 120 --worker-class gevent
-    ports:
-      - 54928:54928
+    expose:
+      - 54928
     environment:
       - MONGOURI
       - OPENAI_API_KEY
       - OPENAI_ORGANIZATION
       - CHATGPT_RESEARCH_SECRET
       - NWORKERS
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - web
