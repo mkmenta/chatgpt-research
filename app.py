@@ -57,7 +57,8 @@ app.register_blueprint(users_blueprint, url_prefix='/')
 def main(chat_id):
     user_id = request.args.get('user_id')
     user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
-    chats = Chat.objects.filter(user=user_to_show)
+    chats = list(Chat.objects.filter(user=user_to_show))
+    chats.reverse()
     if chat_id is not None:
         current_chat = Chat.objects.get(id=chat_id)
         if current_chat.user != user_to_show:
@@ -78,7 +79,7 @@ def send_message(chat_id):
     if chat_id is not None:
         chat = Chat.objects.get(id=chat_id)
     else:
-        chat = Chat(title=datetime.now().strftime("%m/%d/%Y, %H:%M"), user=current_user)
+        chat = Chat(title=datetime.now().strftime("%d/%m/%Y, %H:%M"), user=current_user)
         chat.save()
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
