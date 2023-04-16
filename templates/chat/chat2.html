@@ -45,10 +45,15 @@
             {% if current_chat is not none%}
             {% for message in current_chat.messages %}
             <div class="border-bottom p-2 d-flex messages" style="font-size: small;">
-                <img {% if message.role=="user" %}
-                    src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/user.gif" {% else %}
-                    src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif" {% endif %}
-                    class="rounded-circle mr-1" width="40" height="40">
+                <span>
+                    <img {% if message.role=="user" %}
+                        src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/user.gif" {% else %}
+                        src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif" {% endif %}
+                        class="rounded-circle mr-1" width="40" height="40">
+                    {% if message.role=="assistant" %}
+                    <div>{{message.compute_time}}s</div>
+                    {% endif %}
+                </span>
                 <span class="px-3 py-2" style="white-space: pre-line;">{{ message.content }}</span>
             </div>
             {% endfor %}

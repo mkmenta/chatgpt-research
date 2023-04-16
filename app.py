@@ -117,6 +117,7 @@ def send_message(chat_id):
             frequency_penalty=0.,
         )
         last_bot_msg.content = response['choices'][0]['message']['content']
+        last_bot_msg.compute_time = response.response_ms/1000
         last_bot_msg.save()
     except Exception as e:
         print(f"Exception: {e}")
