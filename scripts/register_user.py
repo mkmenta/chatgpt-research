@@ -21,6 +21,7 @@ def args():
     parser.add_argument('--email', type=str, default=None)
     parser.add_argument('--password', type=str, default=None)
     parser.add_argument('--gen-password', action='store_true')
+    parser.add_argument('--make-admin', action='store_true')
     parser.add_argument('--edit', action='store_true')
     parser.add_argument('--list', action='store_true')
     return parser.parse_args()
@@ -36,18 +37,23 @@ def main(args):
             print(user.username)
     elif args.edit:
         assert args.username is not None
-        assert args.email is not None or args.password is not None
+        assert args.email is not None or args.password is not None or args.make_admin
         user = User.objects.get(username=args.username)
         if args.email is not None:
             user.email = args.email
         if args.password is not None:
             user.update_password(args.password)
+        if args.make_admin:
+            user.admin = True
         pprint(json.loads(user.to_json()))
     else:
         assert args.username is not None
         assert args.email is not None
         assert args.password is not None
-        user = User.register(username=args.username, email=args.email, password=args.password)
+        user = User.register(username=args.username,
+                             email=args.email,
+                             password=args.password,
+                             admin=args.make_admin)
         pprint(json.loads(user.to_json()))
 
 

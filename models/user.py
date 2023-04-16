@@ -1,3 +1,4 @@
+from utils import now_mytz
 import bcrypt
 from flask_login import UserMixin
 from mongoengine import Document, fields
@@ -8,6 +9,7 @@ class User(Document, UserMixin):
     email = fields.StringField(required=True, unique=True)
     hash = fields.StringField(required=True)
     admin = fields.BooleanField(default=False)
+    created_at = fields.DateTimeField(required=True, default=now_mytz)
 
     @staticmethod
     def register(username: str, email: str, password: str):

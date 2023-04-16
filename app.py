@@ -14,7 +14,7 @@ from models.user import User
 from routes.users import blueprint as users_blueprint, login_manager
 
 
-from utils import HTTPMethodOverrideMiddleware, SanitizedRequest
+from utils import HTTPMethodOverrideMiddleware, SanitizedRequest, now_mytz
 import openai
 # Initialize app
 app = Flask(__name__)
@@ -80,9 +80,7 @@ def send_message(chat_id):
     if chat_id is not None:
         chat = Chat.objects.get(id=chat_id)
     else:
-        rome = pytz.timezone('Europe/Rome')
-        now = datetime.now(tz=rome)
-        chat = Chat(title=now.strftime("%d/%m/%Y, %H:%M"), user=current_user)
+        chat = Chat(title=now_mytz().strftime("%d/%m/%Y, %H:%M"), user=current_user)
         chat.save()
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
