@@ -59,13 +59,12 @@ def main(chat_id):
     user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
     chats = list(Chat.objects.filter(user=user_to_show))
     chats.reverse()
-    usage = 0
+    usage = {chat.id: int(chat.total_tokens * 100 // 4096)
+             for chat in chats}
     if chat_id is not None:
         current_chat = Chat.objects.get(id=chat_id)
         if current_chat.user != user_to_show:
             raise Exception("Chat does not belong to user")
-        usage = (int(current_chat.total_tokens * 100 // 4096)
-                 if current_chat.total_tokens < 4096 else 100)
     else:
         current_chat = None
     if current_user.admin:
