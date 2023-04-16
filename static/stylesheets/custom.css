@@ -13,8 +13,14 @@
 }
 
 .seconds {
-  color: #999;
+  color: #b3b3b3;
   font-style: italic;
   text-align: center;
   font-size: 0.6rem;
+}
+.bg-light-grey {
+  background-color: #b3b3b3;
+}
+.text-light-grey {
+  color: #b3b3b3;
 }
