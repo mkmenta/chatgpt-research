@@ -52,8 +52,9 @@ def main(args):
         assert args.password is not None
         user = User.register(username=args.username,
                              email=args.email,
-                             password=args.password,
-                             admin=args.make_admin)
+                             password=args.password)
+        user.admin = args.make_admin
+        user.save()
         pprint(json.loads(user.to_json()))
 
 
