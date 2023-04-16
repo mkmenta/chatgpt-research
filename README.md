@@ -9,14 +9,14 @@
 3. Modify `nginx/conf/nginx.conf` changing:
     - `chatresearch.it` by your domain.
     - Removing the part `server { listen 443 ...}` temporarily.
-4. Run docker compose up
+4. Run `docker compose up --build`
 5. Test certbot to get your certificates with:
 ```
 docker compose run --rm  certbot certonly --webroot --webroot-path /var/www/certbot/ --dry-run -d example.org -d www.example.org
 ```
 6. If it works fine, run the same command without `--dryrun`
 7. Bring back to `nginx/conf/nginx.conf` the part of `server { listen 443 ...}`
-8. Run `docker compose up` again. (Maybe run `docker compose down first`).
+8. Run `docker compose up --build` again. (Maybe run `docker compose down first`).
 
 For certificate renewal:
 ```
