@@ -7,6 +7,7 @@ from flask_session import Session
 from flask_login import login_required, current_user
 
 from mongoengine import connect
+import pytz
 from models.chat import Chat
 from models.message import Message
 from models.user import User
@@ -79,7 +80,9 @@ def send_message(chat_id):
     if chat_id is not None:
         chat = Chat.objects.get(id=chat_id)
     else:
-        chat = Chat(title=datetime.now().strftime("%d/%m/%Y, %H:%M"), user=current_user)
+        rome = pytz.timezone('Europe/Rome')
+        now = datetime.now(tz=rome)
+        chat = Chat(title=now.strftime("%d/%m/%Y, %H:%M"), user=current_user)
         chat.save()
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
