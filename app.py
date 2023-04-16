@@ -59,7 +59,7 @@ def main(chat_id):
     user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
     chats = list(Chat.objects.filter(user=user_to_show))
     chats.reverse()
-    usage = {chat.id: int(chat.total_tokens * 100 // 4096)
+    usage = {chat.id: int(chat.total_tokens * 100 // (4096-1024))
              for chat in chats}
     if chat_id is not None:
         current_chat = Chat.objects.get(id=chat_id)

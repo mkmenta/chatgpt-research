@@ -95,7 +95,7 @@
                     bg-warning
                     {% endif %}
                 {% endif %}
-                " role="progressbar" style="width: {{ usage }}%" aria-valuenow="25" aria-valuemin="0"
+                " role="progressbar" style="width: {{ usage[current_chat.id] }}%" aria-valuenow="25" aria-valuemin="0"
                     aria-valuemax="100"></div>
             </div>
             <form {% if current_chat is not none%} action="/{{ current_chat.id }}/messages/send" {% else %}
