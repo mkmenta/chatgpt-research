@@ -51,7 +51,7 @@
                         src="https://chatresearch-it.s3.eu-west-1.amazonaws.com/static/imgs/openai.gif" {% endif %}
                         class="rounded-circle mr-1" width="40" height="40">
                     {% if message.role=="assistant" %}
-                    <div>{{message.compute_time}}s</div>
+                    <div class="seconds">{{"%.1f"|format(message.compute_time)}}s</div>
                     {% endif %}
                 </span>
                 <span class="px-3 py-2" style="white-space: pre-line;">{{ message.content }}</span>
