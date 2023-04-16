@@ -101,14 +101,19 @@ def send_message(chat_id):
             "role": msg.role,
             "content": msg.content
         }
-        for msg in chat.messages
+        for msg in chat.messages[:-1]
     ])
-    # print(messages)
-    # response = {'choices': [{'message': {'content': 'Hello world'}}]}
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
-            messages=messages
+            messages=messages,
+            temperature=0.7,
+            top_p=1.,
+            n=1,
+            stream=False,
+            stop=None,
+            presence_penalty=0.,
+            frequency_penalty=0.,
         )
         last_bot_msg.content = response['choices'][0]['message']['content']
         last_bot_msg.save()
