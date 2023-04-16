@@ -1,8 +1,7 @@
 import os
 from datetime import timedelta
-from datetime import datetime
 
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for
+from flask import Flask, redirect, render_template, request, send_from_directory
 from flask_session import Session
 from flask_login import login_required, current_user
 
@@ -142,25 +141,6 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'imgs/favicon/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-# Jinja filters
-
-
-@app.template_filter('env_override')
-def env_override(value, key):
-    return os.getenv(key, value)
-
-
-""" Tackle plan:
-1. Send post
-2. Create a fake message "..."
-3. Make visible last message with javascript and disable send mesage
-4. The redirect will give the new conversation
-
-In case before 4 the user refreshes the page
-should see the fake message
-If the last message is a ... then with javascript force a refresh of the page each 3 secs and disable send message
-That should do it
-"""
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=54928)
