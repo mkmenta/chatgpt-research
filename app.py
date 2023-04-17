@@ -13,7 +13,7 @@ from models.user import User
 from routes.users import blueprint as users_blueprint, login_manager
 
 
-from utils import HTTPMethodOverrideMiddleware, SanitizedRequest, now_mytz
+from utils import HTTPMethodOverrideMiddleware, SanitizedRequest, TokenCounter, now_mytz
 import openai
 # Initialize app
 app = Flask(__name__)
@@ -38,9 +38,11 @@ app.config.from_object(__name__)
 Session(app)
 
 SYSTEM_PROMPT = "You are a helpful assistant called ChatGPT."
-SYSTEM_TOKENS = 18
+SYSTEM_TOKENS = 17
 MAX_TOKENS = 4097
 MARGIN_TOKENS = 1024
+MODEL = "gpt-3.5-turbo-0301"
+token_counter = TokenCounter(MODEL)
 
 # Add HTTP method override middleware (to allow PUT, DELETE etc.)
 app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
@@ -91,6 +93,7 @@ def send_message(chat_id):
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
     last_usr_msg = Message(role="user", content=request.form.get('message').striptags())
+    last_usr_msg.num_tokens = token_counter.num_tokens_from_string(last_usr_msg.content)
     last_usr_msg.save()
     chat.messages.append(last_usr_msg)
     last_bot_msg = Message(role="assistant", content="Writing...")
@@ -123,7 +126,7 @@ def send_message(chat_id):
     ])
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=MODEL,
             messages=messages,
             temperature=0.7,
             top_p=1.,
@@ -135,11 +138,8 @@ def send_message(chat_id):
         )
         last_bot_msg.content = response['choices'][0]['message']['content']
         last_bot_msg.compute_time = response.response_ms/1000
-        last_bot_msg.num_tokens = response['usage']['completion_tokens']
+        last_bot_msg.num_tokens = token_counter.num_tokens_from_string(last_usr_msg.content)
         last_bot_msg.save()
-        conversation_tokens = sum([msg.num_tokens for msg in message_objs[:-1]]) + SYSTEM_TOKENS
-        last_usr_msg.num_tokens = response['usage']['prompt_tokens'] - conversation_tokens
-        last_usr_msg.save()
         chat.total_tokens = sum([msg.num_tokens for msg in chat.messages])
         chat.save()
     except Exception as e:
