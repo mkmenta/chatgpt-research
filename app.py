@@ -13,7 +13,7 @@ from models.user import User
 from routes.users import blueprint as users_blueprint, login_manager
 
 
-from utils import HTTPMethodOverrideMiddleware, SanitizedRequest, now_mytz
+from utils import HTTPMethodOverrideMiddleware, SanitizedRequest, TokenCounter, now_mytz
 import openai
 # Initialize app
 app = Flask(__name__)
@@ -37,6 +37,12 @@ PERMANENT_SESSION_LIFETIME = timedelta(days=7)  # Lifetime of the session cookie
 app.config.from_object(__name__)
 Session(app)
 
+SYSTEM_PROMPT = "You are a helpful assistant called ChatGPT."
+SYSTEM_TOKENS = 17
+MAX_TOKENS = 4097
+MARGIN_TOKENS = 1024
+MODEL = "gpt-3.5-turbo-0301"
+token_counter = TokenCounter(MODEL)
 
 # Add HTTP method override middleware (to allow PUT, DELETE etc.)
 app.wsgi_app = HTTPMethodOverrideMiddleware(app.wsgi_app)
@@ -59,7 +65,7 @@ def main(chat_id):
     user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
     chats = list(Chat.objects.filter(user=user_to_show))
     chats.reverse()
-    usage = {chat.id: int(chat.total_tokens * 100 // (4096-1024))
+    usage = {chat.id: int(chat.total_tokens * 100 // (MAX_TOKENS - MARGIN_TOKENS))
              for chat in chats}
     if chat_id is not None:
         current_chat = Chat.objects.get(id=chat_id)
@@ -87,6 +93,7 @@ def send_message(chat_id):
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
     last_usr_msg = Message(role="user", content=request.form.get('message').striptags())
+    last_usr_msg.num_tokens = token_counter.num_tokens_from_string(last_usr_msg.content)
     last_usr_msg.save()
     chat.messages.append(last_usr_msg)
     last_bot_msg = Message(role="assistant", content="Writing...")
@@ -95,21 +102,31 @@ def send_message(chat_id):
     chat.save()
     messages = [{
         "role": "system",
-        "content": "You are a helpful assistant called ChatGPT."
+        "content": SYSTEM_PROMPT
         # num_tokens=18
         # Answer as concisely as possible. "
         # f"Knowledge cutoff: 2021 Current date: {datetime.now().strftime('%d %B, %Y')}."
     }]
+    message_objs = chat.messages
+    if chat.total_tokens > (MAX_TOKENS-MARGIN_TOKENS + SYSTEM_TOKENS):
+        # Keep last messages that sum less than (MAX_TOKENS-MARGIN_TOKENS + SYSTEM_TOKENS)
+        n_tokens = 0
+        for i in range(1, len(chat.messages)+1):
+            n_tokens += chat.messages[-i].num_tokens
+            if n_tokens > (MAX_TOKENS-MARGIN_TOKENS + SYSTEM_TOKENS):
+                message_objs = message_objs[-i+1:]
+                break
+        del n_tokens
     messages.extend([
         {
             "role": msg.role,
             "content": msg.content
         }
-        for msg in chat.messages[:-1]
+        for msg in message_objs[:-1]
     ])
     try:
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model=MODEL,
             messages=messages,
             temperature=0.7,
             top_p=1.,
@@ -121,15 +138,12 @@ def send_message(chat_id):
         )
         last_bot_msg.content = response['choices'][0]['message']['content']
         last_bot_msg.compute_time = response.response_ms/1000
-        last_bot_msg.num_tokens = response['usage']['completion_tokens']
+        last_bot_msg.num_tokens = token_counter.num_tokens_from_string(last_usr_msg.content)
         last_bot_msg.save()
-        conversation_tokens = sum([msg.num_tokens for msg in chat.messages[:-1]]) + 18  # system prompt
-        last_usr_msg.num_tokens = response['usage']['prompt_tokens'] - conversation_tokens
-        last_usr_msg.save()
-        chat.total_tokens = response['usage']['total_tokens']
+        chat.total_tokens = sum([msg.num_tokens for msg in chat.messages])
         chat.save()
     except Exception as e:
-        print(f"Exception: {e}")
+        print(f"Exception {type(e)}: {e.code} {e.user_message if hasattr(e,'user_message') else ''} {e}")
         last_bot_msg.delete()
         last_usr_msg.delete()
     return redirect(f"/{chat.id}")
