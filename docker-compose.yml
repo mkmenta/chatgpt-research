@@ -24,6 +24,7 @@ services:
       # we map the folder located at /etc/nginx/conf.d/ from the docker container
       # to a folder located at ./nginx/conf/ on our local machine (in read-only mode)
       - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./nginx/logs/:/var/log/nginx/
       - ./certbot/www:/var/www/certbot/:ro
       - ./certbot/conf/:/etc/nginx/ssl/:ro
     depends_on:
