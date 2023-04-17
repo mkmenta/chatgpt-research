@@ -138,7 +138,7 @@ def send_message(chat_id):
         )
         last_bot_msg.content = response['choices'][0]['message']['content']
         last_bot_msg.compute_time = response.response_ms/1000
-        last_bot_msg.num_tokens = token_counter.num_tokens_from_string(last_usr_msg.content)
+        last_bot_msg.num_tokens = token_counter.num_tokens_from_string(last_bot_msg.content)
         last_bot_msg.save()
         chat.total_tokens = sum([msg.num_tokens for msg in chat.messages])
         chat.save()
