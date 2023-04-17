@@ -100,12 +100,25 @@ def send_message(chat_id):
         # Answer as concisely as possible. "
         # f"Knowledge cutoff: 2021 Current date: {datetime.now().strftime('%d %B, %Y')}."
     }]
+    start_idx = 0
+    to_ignore = 0
+    message_objs = chat.messages
+    if chat.total_tokens > (4096-1024):
+        # TODO
+        to_ignore = 0
+        for msg in chat.messages:
+            to_ignore += msg.num_tokens
+            start_idx += 1
+            if to_ignore >= 1024:
+                break
+        if start_idx == len(chat.messages):
+            start_idx -= 1
     messages.extend([
         {
             "role": msg.role,
             "content": msg.content
         }
-        for msg in chat.messages[:-1]
+        for msg in message_objs[:-1]
     ])
     try:
         response = openai.ChatCompletion.create(
@@ -123,10 +136,10 @@ def send_message(chat_id):
         last_bot_msg.compute_time = response.response_ms/1000
         last_bot_msg.num_tokens = response['usage']['completion_tokens']
         last_bot_msg.save()
-        conversation_tokens = sum([msg.num_tokens for msg in chat.messages[:-1]]) + 18  # system prompt
+        conversation_tokens = sum([msg.num_tokens for msg in message_objs[:-1]]) + 18  # system prompt
         last_usr_msg.num_tokens = response['usage']['prompt_tokens'] - conversation_tokens
         last_usr_msg.save()
-        chat.total_tokens = response['usage']['total_tokens']
+        chat.total_tokens = sum([msg.num_tokens for msg in chat.messages]) + 18  # system prompt
         chat.save()
     except Exception as e:
         print(f"Exception: {e}")
