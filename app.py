@@ -142,7 +142,7 @@ def send_message(chat_id):
         chat.total_tokens = sum([msg.num_tokens for msg in chat.messages]) + 18  # system prompt
         chat.save()
     except Exception as e:
-        print(f"Exception: {e}")
+        print(f"Exception {type(e)}: {e.code} {e.user_message if hasattr(e,'user_message') else ''} {e}")
         last_bot_msg.delete()
         last_usr_msg.delete()
     return redirect(f"/{chat.id}")
