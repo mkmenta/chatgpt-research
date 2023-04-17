@@ -1,7 +1,26 @@
 @keyframes spin {
   100% {transform: rotate(-360deg);}
 }
+@-moz-keyframes spin {
+  100% {-moz-transform: rotate(-360deg);}
+}
+@-webkit-keyframes spin {
+  100% {-webkit-transform: rotate(-360deg);}
+}
 
 .round-and-round {
       animation: spin 1s cubic-bezier(0.52, 0.0, 0.48, 1.0) infinite;
+}
+
+.seconds {
+  color: #b3b3b3;
+  font-style: italic;
+  text-align: center;
+  font-size: 0.6rem;
+}
+.bg-light-grey {
+  background-color: #b3b3b3;
+}
+.text-light-grey {
+  color: #b3b3b3;
 }

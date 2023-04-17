@@ -1,19 +1,19 @@
 import os
 from datetime import timedelta
-from datetime import datetime
 
-from flask import Flask, redirect, render_template, request, send_from_directory, url_for
+from flask import Flask, redirect, render_template, request, send_from_directory
 from flask_session import Session
 from flask_login import login_required, current_user
 
 from mongoengine import connect
+import pytz
 from models.chat import Chat
 from models.message import Message
 from models.user import User
 from routes.users import blueprint as users_blueprint, login_manager
 
 
-from utils import HTTPMethodOverrideMiddleware, SanitizedRequest
+from utils import HTTPMethodOverrideMiddleware, SanitizedRequest, now_mytz
 import openai
 # Initialize app
 app = Flask(__name__)
@@ -59,6 +59,8 @@ def main(chat_id):
     user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
     chats = list(Chat.objects.filter(user=user_to_show))
     chats.reverse()
+    usage = {chat.id: int(chat.total_tokens * 100 // (4096-1024))
+             for chat in chats}
     if chat_id is not None:
         current_chat = Chat.objects.get(id=chat_id)
         if current_chat.user != user_to_show:
@@ -69,7 +71,8 @@ def main(chat_id):
         users = User.objects.filter(username__not__startswith="test-")
     else:
         users = []
-    return render_template('chat/chat2.html', chats=chats, current_chat=current_chat, users=users, user_to_show=user_to_show)
+    return render_template('chat/chat2.html', chats=chats, current_chat=current_chat, users=users,
+                           user_to_show=user_to_show, usage=usage)
 
 
 @app.route('/new/messages/send', methods=['POST'], defaults={'chat_id': None})
@@ -79,7 +82,7 @@ def send_message(chat_id):
     if chat_id is not None:
         chat = Chat.objects.get(id=chat_id)
     else:
-        chat = Chat(title=datetime.now().strftime("%d/%m/%Y, %H:%M"), user=current_user)
+        chat = Chat(title=now_mytz().strftime("%d/%m/%Y, %H:%M"), user=current_user)
         chat.save()
     if chat.user != current_user:
         raise Exception("Chat does not belong to user")
@@ -93,6 +96,7 @@ def send_message(chat_id):
     messages = [{
         "role": "system",
         "content": "You are a helpful assistant called ChatGPT."
+        # num_tokens=18
         # Answer as concisely as possible. "
         # f"Knowledge cutoff: 2021 Current date: {datetime.now().strftime('%d %B, %Y')}."
     }]
@@ -116,7 +120,14 @@ def send_message(chat_id):
             frequency_penalty=0.,
         )
         last_bot_msg.content = response['choices'][0]['message']['content']
+        last_bot_msg.compute_time = response.response_ms/1000
+        last_bot_msg.num_tokens = response['usage']['completion_tokens']
         last_bot_msg.save()
+        conversation_tokens = sum([msg.num_tokens for msg in chat.messages[:-1]]) + 18  # system prompt
+        last_usr_msg.num_tokens = response['usage']['prompt_tokens'] - conversation_tokens
+        last_usr_msg.save()
+        chat.total_tokens = response['usage']['total_tokens']
+        chat.save()
     except Exception as e:
         print(f"Exception: {e}")
         last_bot_msg.delete()
@@ -129,25 +140,6 @@ def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'imgs/favicon/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-# Jinja filters
-
-
-@app.template_filter('env_override')
-def env_override(value, key):
-    return os.getenv(key, value)
-
-
-""" Tackle plan:
-1. Send post
-2. Create a fake message "..."
-3. Make visible last message with javascript and disable send mesage
-4. The redirect will give the new conversation
-
-In case before 4 the user refreshes the page
-should see the fake message
-If the last message is a ... then with javascript force a refresh of the page each 3 secs and disable send message
-That should do it
-"""
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=54928)
