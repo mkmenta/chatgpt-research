@@ -1,0 +1,43 @@
+{% extends "layouts/boilerplate.html" %}
+{% block body %}
+<div class="row align-items-center justify-content-center mt-5">
+    <div class="col-10 col-lg-6">
+        <div class="card">
+            <h3 class="card-header">Terms of use</h3>
+            <div class="card-body">
+                <h5 class="card-title">This website uses ChatGPT-API from OpenAI</h5>
+                <p class="card-text">
+                    Read carefully the usage policies and terms of use of ChatGPT-API:
+                    <ul>
+                        <li>
+                            <a href="https://openai.com/policies/usage-policies">
+                                https://openai.com/policies/usage-policies
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://openai.com/policies">
+                                https://openai.com/policies
+                            </a>
+                        </li>
+                    </ul>
+                </p>
+                <h5 class="card-title">This is a research oriented website</h5>
+                <p class="card-text">
+                    Moreover, take into consideration that your interactions will be revised and studied by the
+                    researchers and published anonymously.
+                </p>
+                <p class="card-text">
+                    By clicking here, I state that I have read and understood the terms of use and conditions:
+                </p>
+                <div class="text-center">
+                    <form action="/terms/accept" method="POST">
+                        <button type="submit" class="btn btn-primary btn-success">
+                            I understand and accept
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

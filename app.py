@@ -61,6 +61,8 @@ app.register_blueprint(users_blueprint, url_prefix='/')
 @app.route('/<chat_id>', methods=['GET'])
 @login_required
 def main(chat_id):
+    if not current_user.terms_accepted:
+        return redirect('/terms')
     user_id = request.args.get('user_id')
     user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
     chats = list(Chat.objects.filter(user=user_to_show))
@@ -147,6 +149,20 @@ def send_message(chat_id):
         last_bot_msg.delete()
         last_usr_msg.delete()
     return redirect(f"/{chat.id}")
+
+
+@app.route('/terms', methods=['GET'])
+@login_required
+def terms():
+    return render_template('terms.html')
+
+
+@app.route('/terms/accept', methods=['POST'])
+def accept_tos():
+    if not current_user.terms_accepted:
+        current_user.terms_accepted = True
+        current_user.save()
+    return redirect('/')
 
 
 @app.route('/favicon.ico')
