@@ -34,7 +34,7 @@ def post_register_user():
     except NotUniqueError:
         flash("User already exists.", "error")
         return redirect("/register")
-    flash('User registered!', 'success')
+    flash('User registered successfully.', 'success')
     return redirect("/register")
 
 
@@ -66,5 +66,5 @@ def post_login_user():
 @login_required
 def get_logout_user():
     logout_user()
-    flash('Goodbye!', 'success')
-    return redirect('/')
+    flash('Logged out successfully.', 'success')
+    return redirect('/login')
