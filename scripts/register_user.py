@@ -48,7 +48,6 @@ def main(args):
         pprint(json.loads(user.to_json()))
     else:
         assert args.username is not None
-        assert args.email is not None
         assert args.password is not None
         user = User.register(username=args.username,
                              email=args.email,

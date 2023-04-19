@@ -27,7 +27,10 @@ def register_user():
 @blueprint.route('/register', methods=['POST'])
 def post_register_user():
     try:
-        user = User.register(**request.form)
+        data = {**request.form}
+        if data['email'] == '':
+            data['email'] = None
+        user = User.register(**data)
     except NotUniqueError:
         flash("User already exists.", "error")
         return redirect("/register")
