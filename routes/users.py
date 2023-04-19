@@ -48,12 +48,12 @@ def post_login_user():
         user = User.objects.get(username=request.form['username'])
         if user.authenticate(request.form['password']):
             login_user(user)
-            flash('Welcome back!', 'success')
+            # flash('Welcome back!', 'success')
             # next = session['next']
             # del session['next']
             # if not is_safe_url(next):
             # return abort(400)
-            return redirect('/')
+            return redirect('/terms')
     except DoesNotExist:
         pass
     flash("Password or username is incorrect.", "error")
