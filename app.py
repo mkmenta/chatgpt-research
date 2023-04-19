@@ -149,9 +149,9 @@ def send_message(chat_id):
     return redirect(f"/{chat.id}")
 
 
-@app.route('/tos', methods=['GET'])
-def tos():
-    return render_template('tos.html')
+@app.route('/terms', methods=['GET'])
+def terms():
+    return render_template('terms.html')
 
 
 @app.route('/accept', methods=['POST'])
