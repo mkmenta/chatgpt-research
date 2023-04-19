@@ -1,12 +1,12 @@
 import os
 from datetime import timedelta
 
-from flask import Flask, redirect, render_template, request, send_from_directory
+from flask import Flask, abort, redirect, render_template, request, send_from_directory
 from flask_session import Session
 from flask_login import login_required, current_user
 
 from mongoengine import connect
-import pytz
+from mongoengine.errors import ValidationError
 from models.chat import Chat
 from models.message import Message
 from models.user import User
@@ -63,16 +63,23 @@ app.register_blueprint(users_blueprint, url_prefix='/')
 def main(chat_id):
     if not current_user.terms_accepted:
         return redirect('/terms')
-    user_id = request.args.get('user_id')
-    user_to_show = User.objects.get(id=user_id) if user_id is not None else current_user
+    user_to_show = current_user
+    if current_user.admin:
+        user_id = request.args.get('user_id')
+        if user_id is not None:
+            user_to_show = User.objects.get(id=user_id)
     chats = list(Chat.objects.filter(user=user_to_show))
     chats.reverse()
     usage = {chat.id: int(chat.total_tokens * 100 // (MAX_TOKENS - MARGIN_TOKENS))
              for chat in chats}
     if chat_id is not None:
-        current_chat = Chat.objects.get(id=chat_id)
+        try:
+            current_chat = Chat.objects.get(id=chat_id)
+        except (Chat.DoesNotExist, ValidationError):
+            abort(404)
         if current_chat.user != user_to_show:
-            raise Exception("Chat does not belong to user")
+            # raise Exception("Chat does not belong to user")
+            abort(404)
     else:
         current_chat = None
     if current_user.admin:
