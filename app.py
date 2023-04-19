@@ -158,6 +158,7 @@ def terms():
 
 
 @app.route('/terms/accept', methods=['POST'])
+@login_required
 def accept_tos():
     if not current_user.terms_accepted:
         current_user.terms_accepted = True
