@@ -7,7 +7,7 @@ from mongoengine import Document, fields
 
 class User(Document, UserMixin):
     username = fields.StringField(required=True, unique=True)
-    email = fields.StringField(required=False, unique=True)
+    email = fields.StringField(required=False)
     hash = fields.StringField(required=True)
     admin = fields.BooleanField(default=False)
     terms_accepted = fields.BooleanField(default=False)
