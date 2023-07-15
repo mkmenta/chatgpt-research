@@ -7,7 +7,7 @@
     - CHATGPT_RESEARCH_SECRET
     - NWORKERS (number of cpus)
 3. Modify `nginx/conf/nginx.conf` changing:
-    - `chatresearch.it` by your domain.
+    - `mywebsitedomain.com` by your domain.
     - Removing the part `server { listen 443 ...}` temporarily.
 4. Run `docker compose up --build`
 5. Test certbot to get your certificates with:
