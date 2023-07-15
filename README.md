@@ -26,5 +26,3 @@ docker compose run --rm certbot renew
 ## References
 - https://stackoverflow.com/questions/10938360/how-many-concurrent-requests-does-a-single-flask-process-receive
 - https://mindsers.blog/post/https-using-nginx-certbot-docker/
-## TODO:
-- https://github.com/openai/openai-cookbook/blob/main/examples/How_to_stream_completions.ipynb
