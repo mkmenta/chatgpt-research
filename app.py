@@ -78,7 +78,6 @@ def main(chat_id):
         except (Chat.DoesNotExist, ValidationError):
             abort(404)
         if current_chat.user != user_to_show:
-            # raise Exception("Chat does not belong to user")
             abort(404)
     else:
         current_chat = None
@@ -112,9 +111,6 @@ def send_message(chat_id):
     messages = [{
         "role": "system",
         "content": SYSTEM_PROMPT
-        # num_tokens=18
-        # Answer as concisely as possible. "
-        # f"Knowledge cutoff: 2021 Current date: {datetime.now().strftime('%d %B, %Y')}."
     }]
     message_objs = chat.messages
     if chat.total_tokens > (MAX_TOKENS-MARGIN_TOKENS + SYSTEM_TOKENS):
