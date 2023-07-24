@@ -1,4 +1,12 @@
 # ChatGPT Research
+This web application facilitates researchers in conducting in-depth studies and analysis of user conversations. The website is structured similarly to the original ChatGPT portal, and it is connected to OpenAI's ChatGPT-API. This platform allows researchers to collect and store user interactions for later analysis and publication of their findings.
+
+**DISCLAIMER:** *This repository contains software code for my own experimentation and learning. I offer it to the public as-is, with absolutely no guarantee of suitability for any purpose. Furthermore, I accept no responsibility for any damages or legal issues that may arise from the use or misuse of this code. By using this software, you acknowledge and accept this disclaimer in full.*
+
+![Screenshot](misc/screenshots/conversation.jpg)
+More screenshots [here](misc/screenshots).
+
+## Setup
 1. Install docker
 2. Set the following environment variables:
     - MONGOURI
